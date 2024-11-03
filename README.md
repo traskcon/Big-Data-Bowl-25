@@ -1,7 +1,7 @@
 # Big-Data-Bowl-25
 
 ## Brainstorming
-* Bluff %: WHen the defense shows blitz, how often do they actually bring it?
+* Bluff %: When the defense shows blitz, how often do they actually bring it?
 * Separation Added: Compare receiver separation w/motion vs without
 * Expected Success Rate: Given the both teams alignments pre-snap, how many yards do we expect the offense to gain on this play?
     * Supervised classification problem (Pre-snap positions -> offensive formation, defensive pass coverage)
@@ -9,8 +9,12 @@
     * Alternatively, can attempt to jump straight from pre-snap positions to expected yards
 * Expected Time to Throw: Based on pre-snap alignment, how much time does QB have to throw the ball before a sack?
 * Route prediction: Based on a receiver's alignments, what routes is he likely to run?
+    * Routes charted in the player_plays data: {ANGLE, cORNER, cROSS, FLAT, GO, HITcH, IN, OUT, POST, ScREEN, SLANT, WHEEL}
 * Motion Vulnerability: How much more EPA a team gives up on plays with motion vs comparable static plays
     * Can compare more than just EPA, look at separation, pass rush, run yards
+* Effect of linemen sets on run play success
+* Analyzing punt plays (block probability, return success rate)
+    * can't, dataset excludes special teams plays
 
 ## Outline/Pseudocode
 1. Data Prep
