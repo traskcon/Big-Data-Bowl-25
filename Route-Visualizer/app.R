@@ -45,34 +45,39 @@ cards <- list(
 
 
 # Define UI for application that draws a histogram
-ui <- page_sidebar(
+ui <- page_navbar(
   title = "Route Visualizer",
-  sidebar = sidebar(
-    selectInput("team",
-                "Team:",
-                c("NFL",unique(main_data$teamAbbr)),
-                selected = "NFL"),
-    checkboxInput("targets",
-                  "Targets Only:",
-                  value = FALSE)
+  nav_panel("Routes by Team",
+    layout_sidebar(
+      sidebar = sidebar(
+      selectInput("team",
+                  "Team:",
+                  c("NFL",unique(main_data$teamAbbr)),
+                  selected = "NFL"),
+      checkboxInput("targets",
+                    "Targets Only:",
+                    value = FALSE)
+      ),
+      layout_columns(
+        fill = FALSE,
+        gap = 5,
+        uiOutput("go"),
+        uiOutput("hitch"),
+        uiOutput("flat"),
+        uiOutput("out"),
+        uiOutput("cross"),
+        uiOutput("ins"),
+        uiOutput("post"),
+        uiOutput("slant"),
+        uiOutput("corner"),
+        uiOutput("screen"),
+        uiOutput("angle"),
+        uiOutput("wheel")
+      ),
+      cards[[1]]
+    )
   ),
-  layout_columns(
-    fill = FALSE,
-    gap = 5,
-    uiOutput("go"),
-    uiOutput("hitch"),
-    uiOutput("flat"),
-    uiOutput("out"),
-    uiOutput("cross"),
-    uiOutput("ins"),
-    uiOutput("post"),
-    uiOutput("slant"),
-    uiOutput("corner"),
-    uiOutput("screen"),
-    uiOutput("angle"),
-    uiOutput("wheel")
-  ),
-  cards[[1]]
+  nav_panel("Player Routes")
 )
 
 # Define server logic required to draw a histogram
