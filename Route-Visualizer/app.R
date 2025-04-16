@@ -13,6 +13,7 @@ library(ggplot2)
 library(bslib)
 library(bsicons)
 library(RColorBrewer)
+library(shinysky)
 
 # Define useful functions
 specify_decimal <- function(x, k) trimws(format(round(x, k), nsmall=k))
@@ -33,6 +34,11 @@ player_data <- read_csv("players.csv") |>
 
 # Merge data sources into unified dataframe
 main_data <- merge(player_data, merge(pp_data, play_data))
+
+# Get names of all players who were targeted
+player_names <- main_data |>
+                         filter(wasTargettedReceiver == 1) |>
+                         pull(displayName)
 
 # Define reusable inputs & displays
 cards <- list(
@@ -77,7 +83,19 @@ ui <- page_navbar(
       cards[[1]]
     )
   ),
-  nav_panel("Player Routes")
+  nav_panel("Player Routes",
+    layout_sidebar(
+      sidebar = sidebar(
+        selectizeInput("player",
+                       "Player:",
+                       c("NFL", unique(player_names)),
+                       multiple=FALSE),
+        checkboxInput("targets",
+                      "Targets Only:",
+                      value = FALSE)
+      )
+    )
+  )
 )
 
 # Define server logic required to draw a histogram
