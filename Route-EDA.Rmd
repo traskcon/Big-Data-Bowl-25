@@ -1,0 +1,85 @@
+---
+title: "Route-Visualizer"
+author: "Connor Trask"
+date: "2025-04-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+library(RColorBrewer)
+```
+
+# Route Visualizer
+
+```{r data}
+pp_data <- read_csv("player_play.csv") |>
+  drop_na(routeRan) |>
+  select(nflId, gameId, playId, hadPassReception, routeRan, wasTargettedReceiver, teamAbbr)
+
+play_data <- read_csv("plays.csv") |>
+  select(gameId, playId, expectedPointsAdded, pff_passCoverage)
+
+player_data <- read_csv("players.csv") |>
+  select(nflId, displayName)
+```
+
+```{r}
+route_counts <- pp_data |>
+  count(routeRan, sort=TRUE)
+
+ggplot(data=route_counts, aes(x=reorder(routeRan,-n),y=n)) +
+  geom_bar(stat="identity") +
+  xlab("Route Run") +
+  ylab("Number of times run")
+```
+
+```{r}
+main_data <- merge(player_data, merge(pp_data, play_data))
+```
+
+```{r}
+route_epa <- main_data |>
+  group_by(routeRan) |>
+  summarise(epa = mean(expectedPointsAdded)) |>
+  mutate(color = cut(epa, c(-Inf,-2,-1.5,-1,-0.5,-0.1,0.1,0.5,1,1.5,2,Inf),
+      labels=c("#8E0152","#C51B7D","#DE77AE","#F1B6DA","#FDE0EF","#F7F7F7","#E6F5D0","#B8E186","#7FBC41","#4D9221","#276419")))
+```
+
+```{r}
+ggplot(main_data, aes(expectedPointsAdded)) + 
+  geom_histogram(bins=11) + facet_wrap(~routeRan) + xlim(-7.5, 7.5)
+```
+
+```{r}
+display.brewer.all(type="div", colorblindFriendly = TRUE)
+#PiYG looks like it'll be the best for our purposes,
+# colorlbind friendly but still capturing that classic
+# "green = good, red = bad" intuition
+brewer.pal(n=11, "PiYG")
+
+bin_colors <- function(epa) {
+  
+}
+
+```
+Color Buckets:
+* EPA <= -2
+* -2 < EPA <= -1.5
+* -1.5 < EPA <= -1
+* -1 < EPA <= -0.5
+* -0.5 < EPA <= -0.1
+* -0.1 < EPA <= 0.1
+* 0.1 < EPA <= 0.5
+* 0.5 < EPA <= 1
+* 1 < EPA <= 1.5
+* 1.5 < EPA <= 2
+* EPA > 2
+
+```{r}
+test <- paste("-0.0170","F7F7F7")
+str_split_1(test, " ")[1]
+```
+

@@ -1,0 +1,25 @@
+---
+title: "Big-Data-Bowl-Explorations"
+author: "Connor Trask"
+date: "2024-11-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(nflfastR)
+library(dplyr)
+library(tidyverse)
+```
+
+```{r}
+punts <- load_pbp(2022) |>
+  filter(play_type == "punt")
+```
+
+```{r}
+week1 <- punts |>
+  filter(week == 1) |>
+  select(old_game_id, play_id, home_team, away_team, yardline_100)
+```
+

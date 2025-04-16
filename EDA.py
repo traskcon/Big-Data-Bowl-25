@@ -14,6 +14,6 @@ def show_play(play_df):
     ani.show()
 
 sample_game = week1_tracking[week1_tracking["gameId"] == 2022091107]
-sample_play = sample_game[sample_game["playId"] == 2200]
+sample_play = sample_game[sample_game["playId"] == 136]
 
 show_play(sample_play)
