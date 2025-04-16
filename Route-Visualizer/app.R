@@ -16,6 +16,9 @@ library(RColorBrewer)
 
 # Define useful functions
 specify_decimal <- function(x, k) trimws(format(round(x, k), nsmall=k))
+#get_color <- function(route_epa, route) {
+#  filter(route_epa, routeRan == route)$color
+#} 
 
 # Load data from csv files on app start
 pp_data <- read_csv("player_play.csv") |>
@@ -39,69 +42,6 @@ cards <- list(
     plotOutput("routeDist")
   )
 )
-vbs <- list(
-  value_box(
-    title = "Go",
-    value = textOutput("go"),
-    showcase = bs_icon("arrow-up"),
-    theme = get_color()
-  ),
-  value_box(
-    title = "Hitch",
-    value = textOutput("hitch"),
-    showcase = bs_icon("4-square")
-  ),
-  value_box(
-    title = "Flat",
-    value = textOutput("flat"),
-    showcase = bs_icon("arrow-left")
-  ),
-  value_box(
-    title = "Out",
-    value = textOutput("out"),
-    showcase = bs_icon("arrow-90deg-left")
-  ),
-  value_box(
-    title = "Cross",
-    value = textOutput("cross"),
-    showcase = bs_icon("arrow-up-right")
-  ),
-  value_box(
-    title = "In",
-    value = textOutput("ins"),
-    showcase = bs_icon("arrow-90deg-right")
-  ),
-  value_box(
-    title = "Post",
-    value = textOutput("post"),
-    showcase = bs_icon("8-square")
-  ),
-  value_box(
-    title = "Slant",
-    value = textOutput("slant"),
-    showcase = bs_icon("2-square")
-  ),
-  value_box(
-    title = "Corner",
-    value = textOutput("corner"),
-    showcase = bs_icon("7-square")
-  ),
-  value_box(
-    title = "Screen",
-    value = textOutput("screen"),
-    showcase = bs_icon("arrow-return-right")
-  ),
-  value_box(
-    title = "Angle",
-    value = textOutput("angle"),
-    showcase = bs_icon("arrow-up-left")
-  ),
-  value_box(
-    title = "Wheel",
-    value = textOutput("wheel"),
-    showcase = bs_icon("vinyl-fill")
-  )
-)
 
 
 # Define UI for application that draws a histogram
@@ -118,7 +58,19 @@ ui <- page_sidebar(
   ),
   layout_columns(
     fill = FALSE,
-    !!!vbs
+    gap = 5,
+    uiOutput("go"),
+    uiOutput("hitch"),
+    uiOutput("flat"),
+    uiOutput("out"),
+    uiOutput("cross"),
+    uiOutput("ins"),
+    uiOutput("post"),
+    uiOutput("slant"),
+    uiOutput("corner"),
+    uiOutput("screen"),
+    uiOutput("angle"),
+    uiOutput("wheel")
   ),
   cards[[1]]
 )
@@ -151,8 +103,41 @@ server <- function(input, output) {
       mutate(color = cut(epa, c(-Inf,-2,-1.5,-1,-0.5,-0.1,0.1,0.5,1,1.5,2,Inf),
                          labels=c("#8E0152","#C51B7D","#DE77AE","#F1B6DA","#FDE0EF","#F7F7F7","#E6F5D0","#B8E186","#7FBC41","#4D9221","#276419")))
   })
-  get_color <- reactive({
-    filter(route_epa(), routeRan == "GO")$color
+  go <- reactive({
+    filter(route_epa(), routeRan == "GO")
+  })
+  out <- reactive({
+    filter(route_epa(), routeRan == "OUT")
+  })
+  hitch <- reactive({
+    filter(route_epa(), routeRan == "HITCH")
+  })
+  flat <- reactive({
+    filter(route_epa(), routeRan == "FLAT")
+  })
+  cross <- reactive({
+    filter(route_epa(), routeRan == "CROSS")
+  })
+  ins <- reactive({
+    filter(route_epa(), routeRan == "IN")
+  })
+  post <- reactive({
+    filter(route_epa(), routeRan == "POST")
+  })
+  slant <- reactive({
+    filter(route_epa(), routeRan == "SLANT")
+  })
+  corner <- reactive({
+    filter(route_epa(), routeRan == "CORNER")
+  })
+  screen <- reactive({
+    filter(route_epa(), routeRan == "SCREEN")
+  })
+  angle <- reactive({
+    filter(route_epa(), routeRan == "ANGLE")
+  })
+  wheel <- reactive({
+    filter(route_epa(), routeRan == "WHEEL")
   })
   
   # Plot route distribution
@@ -165,41 +150,101 @@ server <- function(input, output) {
         xlab("Route Run") +
         ylab("Number of times run")
     })
-  output$go <- renderText({
-    specify_decimal(filter(route_epa(), routeRan == "GO")$epa, 4)
-    })
-  output$hitch <- renderText({
-    specify_decimal(filter(route_epa(), routeRan == "HITCH")$epa, 4)
+  output$go <- renderUI({
+    value_box(
+    title = "Go",
+    value = specify_decimal(go()$epa, 4),
+    showcase = bs_icon("arrow-up"),
+    theme = value_box_theme(bg=as.character(go()$color))
+    )
   })
-  output$flat <- renderText({
-    specify_decimal(filter(route_epa(), routeRan == "FLAT")$epa, 4)
+  output$hitch <- renderUI({
+    value_box(
+      title = "Hitch",
+      value = specify_decimal(hitch()$epa, 4),
+      showcase = bs_icon("4-square"),
+      theme = value_box_theme(bg=as.character(hitch()$color))
+    )
   })
-  output$out <- renderText({
-    specify_decimal(filter(route_epa(), routeRan == "OUT")$epa, 4)
+  output$flat <- renderUI({
+    value_box(
+      title = "Flat",
+      value = specify_decimal(flat()$epa, 4),
+      showcase = bs_icon("arrow-left"),
+      theme = value_box_theme(bg=as.character(flat()$color))
+    )
   })
-  output$cross <- renderText({
-    specify_decimal(filter(route_epa(), routeRan == "CROSS")$epa, 4)
+  output$out <- renderUI({
+    value_box(
+      title = "Out",
+      value = specify_decimal(out()$epa, 4),
+      showcase = bs_icon("arrow-90deg-left"),
+      theme = value_box_theme(bg=as.character(out()$color))
+    )
   })
-  output$ins <- renderText({
-    specify_decimal(filter(route_epa(), routeRan == "IN")$epa, 4)
+  output$cross <- renderUI({
+    value_box(
+      title = "Cross",
+      value = specify_decimal(cross()$epa, 4),
+      showcase = bs_icon("arrow-up-right"),
+      theme = value_box_theme(bg=as.character(cross()$color))
+    )
   })
-  output$post <- renderText({
-    specify_decimal(filter(route_epa(), routeRan == "POST")$epa, 4)
+  output$ins <- renderUI({
+    value_box(
+      title = "In",
+      value = specify_decimal(ins()$epa, 4),
+      showcase = bs_icon("arrow-90deg-right"),
+      theme = value_box_theme(bg=as.character(ins()$color))
+    )
   })
-  output$slant <- renderText({
-    specify_decimal(filter(route_epa(), routeRan == "SLANT")$epa, 4)
+  output$post <- renderUI({
+    value_box(
+      title = "Post",
+      value = specify_decimal(post()$epa, 4),
+      showcase = bs_icon("8-square"),
+      theme = value_box_theme(bg=as.character(post()$color))
+    )
   })
-  output$corner <- renderText({
-    specify_decimal(filter(route_epa(), routeRan == "CORNER")$epa, 4)
+  output$slant <- renderUI({
+    value_box(
+      title = "Slant",
+      value = specify_decimal(slant()$epa, 4),
+      showcase = bs_icon("2-square"),
+      theme = value_box_theme(bg=as.character(slant()$color))
+    )
   })
-  output$screen <- renderText({
-    specify_decimal(filter(route_epa(), routeRan == "SCREEN")$epa, 4)
+  output$corner <- renderUI({
+    value_box(
+      title = "Corner",
+      value = specify_decimal(corner()$epa, 4),
+      showcase = bs_icon("7-square"),
+      theme = value_box_theme(bg=as.character(corner()$color))
+    )
   })
-  output$angle <- renderText({
-    specify_decimal(filter(route_epa(), routeRan == "ANGLE")$epa, 4)
+  output$screen <- renderUI({
+    value_box(
+      title = "Screen",
+      value = specify_decimal(screen()$epa, 4),
+      showcase = bs_icon("arrow-return-right"),
+      theme = value_box_theme(bg=as.character(screen()$color))
+    )
   })
-  output$wheel <- renderText({
-    specify_decimal(filter(route_epa(), routeRan == "WHEEL")$epa, 4)
+  output$angle <- renderUI({
+    value_box(
+      title = "Angle",
+      value = specify_decimal(angle()$epa, 4),
+      showcase = bs_icon("arrow-up-left"),
+      theme = value_box_theme(bg=as.character(angle()$color))
+    )
+  })
+  output$wheel <- renderUI({
+    value_box(
+      title = "Wheel",
+      value = specify_decimal(wheel()$epa, 4),
+      showcase = bs_icon("vinyl-fill"),
+      theme = value_box_theme(bg=as.character(wheel()$color))
+    )
   })
 }
 
